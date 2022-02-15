@@ -4,8 +4,10 @@ import uuid
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from gdstorage.storage import GoogleDriveStorage
 
-# Create your models here.
+# Define Google Drive Storage
+gd_storage = GoogleDriveStorage()
 
 
 class ReportModel(models.Model):
@@ -25,6 +27,7 @@ class ReportVersionModel(models.Model):
     report = models.ForeignKey(ReportModel, on_delete=models.CASCADE)
     created_by = models.CharField(max_length=255)
     created_on = models.DateTimeField(auto_now_add=True, null=False, blank=False)
+    # file = models.FileField(upload_to='/RedSeerFiles', storage=gd_storage)
     file = models.FileField(upload_to='message/%Y/%m/%d/', max_length=100, blank=True)
 
     class Meta:
@@ -43,6 +46,8 @@ class ReportUserModel(models.Model):
     class Meta:
         managed = True
         db_table = str(AppConfig.name) + "_" + "ReportUser"
+
+
 
 
 # # convert to report version model

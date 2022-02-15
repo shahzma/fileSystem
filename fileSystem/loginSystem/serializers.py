@@ -40,12 +40,9 @@ class ReportVersionSerializer(serializers.ModelSerializer):
         #
         # # Find a user with that username
         # user = User.objects.get(username=user_data['username'])
-        print(validated_data)
         report = validated_data['report']
-        print('report=', report['report_name'])
         report = ReportModel.objects.get(report_name=report['report_name'])
         validated_data['report'] = report
-        print(validated_data)
         if request:
             created_by = request.user.username
             validated_data['created_by'] = created_by

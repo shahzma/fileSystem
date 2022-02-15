@@ -6,6 +6,11 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from . import models
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.response import Response
+from rest_framework import status
+from django.conf import settings
+from django.core.mail import send_mail
+
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 # from django.contrib.auth.models import User
@@ -46,6 +51,31 @@ class ReportVersionLCView(ListCreateAPIView):
         report_id = models.ReportModel.objects.filter(report_name=report_name).first()
         # report_version_name = query_params["report_version_name"]
         return self.queryset.filter(report=report_id)
+
+    # def post(self, *args, **kwargs):
+    #     print('data=', self.request.data)
+    #     serializer = self.get_serializer(data=self.request.data)
+    #     print(serializer)
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save()
+    #     return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+
+    def create(self, request, *args, **kwargs):
+        report_name = self.request.data['report']
+        report_id = models.ReportModel.objects.filter(report_name=report_name).first()
+        user_queryset = models.ReportUserModel.objects.filter(report=report_id)
+        user_list = [x.user for x in user_queryset]
+        user_email_list = []
+        for i in user_list:
+            user_model_queryset = User.objects.filter(username=i).first()
+            user_email_list = user_email_list+[user_model_queryset.email]
+        print(user_email_list)
+        subject = 'Redseer files'
+        message = f'New Files available'
+        email_from = settings.EMAIL_HOST_USER
+        recipient_list = ['shahzmaalif@gmail.com']
+        send_mail(subject, message, email_from, recipient_list)
+        return super(ReportVersionLCView, self).create(request, *args, **kwargs)
 
 
 class ReportUserLCView(ListCreateAPIView):
