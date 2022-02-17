@@ -1,3 +1,5 @@
+import datetime
+
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
@@ -64,6 +66,9 @@ class ReportUserSerializer(serializers.ModelSerializer):
         rep = super(ReportUserSerializer, self).to_representation(instance)
         rep['user'] = instance.user.username
         rep['report'] = instance.report.report_name
+        repver_queryset = ReportVersionModel.objects.filter(report=instance.report.id)
+        date_list = [x.created_on for x in repver_queryset]
+        rep['date'] = max(date_list)
         return rep
 
 #convert to report version
