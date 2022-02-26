@@ -29,6 +29,7 @@ class ReportVersionModel(models.Model):
     created_on = models.DateTimeField(auto_now_add=True, null=False, blank=False)
     # file = models.FileField(upload_to='/RedSeerFiles', storage=gd_storage)
     file = models.FileField(upload_to='message/%Y/%m/%d/', max_length=100, blank=True)
+    link = models.TextField(default='http://127.0.0.1:8000/media/message/2022/02/25/Insurance_9OQCmFU.xlsx')
 
     class Meta:
         managed = True

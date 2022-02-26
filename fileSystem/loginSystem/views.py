@@ -10,7 +10,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.conf import settings
 from django.core.mail import send_mail
-
+from . base_functions import get_token
+import requests
+import json
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 # from django.contrib.auth.models import User
@@ -24,6 +26,8 @@ from django.urls import reverse_lazy
 # from ems.decorators import admin_hr_required, admin_only
 
 # Create your views here.
+
+
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -62,6 +66,17 @@ class ReportVersionLCView(ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         report_name = self.request.data['report']
+        report_version_name = self.request.data['report_version_name']+'.xlsx'
+        file = self.request.data['file']
+        token2 = get_token()
+        headers2 = {'Authorization': 'Bearer {}'.format(token2['access_token'])}
+        RESOURCE_URL = 'https://graph.microsoft.com/'
+        API_VERSION = 'v1.0'
+        onedrive_destination = '{}/{}/me/drive/root:/UploadFiles'.format(RESOURCE_URL, API_VERSION)
+        r = requests.put(onedrive_destination + "/" + report_version_name + ":/content", data=file, headers=headers2)
+        print('link=', r.json())
+        self.request.data['link'] = r.json()['@microsoft.graph.downloadUrl']
+        print('data=', self.request.data)
         report_id = models.ReportModel.objects.filter(report_name=report_name).first()
         user_queryset = models.ReportUserModel.objects.filter(report=report_id)
         user_list = [x.user for x in user_queryset]
@@ -73,7 +88,7 @@ class ReportVersionLCView(ListCreateAPIView):
         subject = 'Redseer files'
         message = f'New Files available'
         email_from = settings.EMAIL_HOST_USER
-        recipient_list = ['shahzmaalif@gmail.com']
+        recipient_list = ['shahzmaalif@gmail.com']+user_email_list
         send_mail(subject, message, email_from, recipient_list)
         return super(ReportVersionLCView, self).create(request, *args, **kwargs)
 
