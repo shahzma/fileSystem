@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import include
-from .views import UserViewSet, ReportVersionLCView, ReportLCView, ReportUserLCView
+from .views import UserViewSet, ReportVersionLCView, ReportLCView, ReportUserLCView, ReportVersionRUDView
 from rest_framework import routers
 
 
@@ -10,6 +10,7 @@ router.register('users', UserViewSet)
 
 reportversion_urls = [
     path("", ReportVersionLCView.as_view(), name="lc"),
+    path("<uuid:id>", ReportVersionRUDView.as_view(), name="rud")
 ]
 
 reports_urls = [

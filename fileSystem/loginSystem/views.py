@@ -93,6 +93,34 @@ class ReportVersionLCView(ListCreateAPIView):
         return super(ReportVersionLCView, self).create(request, *args, **kwargs)
 
 
+class ReportVersionRUDView(RetrieveUpdateDestroyAPIView):
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+    serializer_class = ReportVersionSerializer
+    queryset = models.ReportVersionModel.objects
+    lookup_field = "id"
+
+    def update(self, request, *args, **kwargs):
+        print(self.request.data)
+        file = False
+        report_version_name = False
+        if 'file' in self.request.data.keys():
+            file = self.request.data['file']
+        if 'report_version_name' in self.request.data.keys():
+            report_version_name = self.request.data['report_version_name'] + '.xlsx'
+        if file and report_version_name:
+            token2 = get_token()
+            headers2 = {'Authorization': 'Bearer {}'.format(token2['access_token'])}
+            RESOURCE_URL = 'https://graph.microsoft.com/'
+            API_VERSION = 'v1.0'
+            onedrive_destination = '{}/{}/me/drive/root:/UploadFiles'.format(RESOURCE_URL, API_VERSION)
+            r = requests.put(onedrive_destination + "/" + report_version_name + ":/content", data=file, headers=headers2)
+            print('link=', r.json())
+            self.request.data['link'] = r.json()['@microsoft.graph.downloadUrl']
+            print('data=', self.request.data)
+        return super(ReportVersionRUDView, self).update(request, *args, **kwargs)
+
+
 class ReportUserLCView(ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
