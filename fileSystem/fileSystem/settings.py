@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'loginSystem',
-    'gdstorage',
 ]
 
 MIDDLEWARE = [
@@ -136,7 +135,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media_root")
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # GOOGLE_DRIVE_STORAGE_JSON_KEY_FILE = '<path to your json private key file>'
-GOOGLE_DRIVE_STORAGE_JSON_KEY_FILE = '/Users/shahzmaalif/Downloads/redseerfilesystem-8e3939aa184b.json'
+# GOOGLE_DRIVE_STORAGE_JSON_KEY_FILE = '/Users/shahzmaalif/Downloads/redseerfilesystem-8e3939aa184b.json'
 # GOOGLE_DRIVE_STORAGE_MEDIA_ROOT = ''
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
