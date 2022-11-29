@@ -43,6 +43,7 @@ class ReportVersionSerializer(serializers.ModelSerializer):
         # # Find a user with that username
         # user = User.objects.get(username=user_data['username'])
         report = validated_data['report']
+        # find report id with given report_name since report_name is what is given to 
         report = ReportModel.objects.get(report_name=report['report_name'])
         validated_data['report'] = report
         if request:

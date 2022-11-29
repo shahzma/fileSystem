@@ -3,3 +3,4 @@ django_googledrive_storage==1.6.0
 djangorestframework==3.13.1
 msal==1.17.0
 requests==2.27.1
+pip install django-cors-headers
